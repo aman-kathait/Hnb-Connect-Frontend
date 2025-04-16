@@ -67,8 +67,8 @@ const CommentDialog = ({open, setOpen}) => {
           </div>
           <div className='p-4'>
             <div className='flex items-center gap-2'>
-              <input type="text" value={text} onChange={changeEventHandler} placeholder='Add a comment...' className='w-full outline-none border text-sm border-gray-300 p-2 rounded' />
-              <Button disabled={!text.trim()} onClick={sendMessageHandler} variant="outline">Send</Button>
+              <input type="text" value={text} onChange={changeEventHandler} placeholder='Add a comment..' className='w-full outline-none border text-sm border-gray-300 p-2 rounded' />
+              <Button disabled={!text.trim()} onClick={sendMessageHandler} variant="outline" className="text-blue-600 hover:text-blue-800">Send</Button>
             </div>
           </div>
         </div>
