@@ -1,19 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Avatar,AvatarFallback,AvatarImage } from './ui/avatar'
 import { Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-
+import {useDispatch, useSelector } from 'react-redux'
+import CreatePost from './CreatePost'
 const LeftSidebar = () => {
 
   const navigate=useNavigate();
+  const {user}=useSelector(store=>store.auth);
+  const dispatch=useDispatch();
+  const [open,setOpen]=useState(false);
   const logoutHandler = async () => {
     console.log("logout handler called");
     
     try {
         const res = await axios.get('https://instaclone-g9h5.onrender.com/api/v1/user/logout', { withCredentials: true });
         if (res.data.success) {
-            // dispatch(setAuthUser(null));
+             dispatch(setAuthUser(null));
             // dispatch(setSelectedPost(null));
             // dispatch(setPosts([]));
             navigate("/login");
@@ -46,7 +50,7 @@ const LeftSidebar = () => {
     {
         icon: (
             <Avatar className='w-7 h-7'>
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarImage src={user?.profilePicture} alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>
         ),
@@ -75,7 +79,7 @@ const LeftSidebar = () => {
           }
         </div>
       </div>
-
+      <CreatePost open={open} setOpen={setOpen} />
     </div>
   )
   }
