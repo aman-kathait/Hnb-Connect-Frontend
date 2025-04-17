@@ -2,7 +2,7 @@ import React from 'react'
 
 const RightSidebar = () => {
   return (
-    <div>RightSidebar</div>
+    <div className='hidden md:block'>RightSidebar</div>
   )
 }
 
