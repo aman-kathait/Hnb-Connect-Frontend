@@ -18,8 +18,8 @@ const LeftSidebar = () => {
         const res = await axios.get('https://instaclone-g9h5.onrender.com/api/v1/user/logout', { withCredentials: true });
         if (res.data.success) {
              dispatch(setAuthUser(null));
-            // dispatch(setSelectedPost(null));
-            // dispatch(setPosts([]));
+            dispatch(setSelectedPost(null));
+            dispatch(setPosts([]));
             navigate("/login");
             toast.success(res.data.message);
         }

@@ -42,7 +42,7 @@ const CreatePost = ({ open, setOpen }) => {
         withCredentials: true
       });
       if (res.data.success) {
-        dispatch(setPosts([res.data.post, ...posts]));// [1] -> [1,2] -> total element = 2
+        dispatch(setPosts([res.data.post, ...posts]));
         toast.success(res.data.message);
         setOpen(false);
       }

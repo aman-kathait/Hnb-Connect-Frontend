@@ -5,8 +5,21 @@ import { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import { Link } from 'react-router-dom'
+import Comment from './Comment'
+import { toast } from 'sonner'
+import { setPosts } from '@/redux/postSlice'
+import { useDispatch, useSelector } from 'react-redux'
 const CommentDialog = ({open, setOpen}) => {
   const [text, setText] = useState("");
+  const { selectedPost, posts } = useSelector(store => store.post);
+  const [comment, setComment] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (selectedPost) {
+      setComment(selectedPost.comments);
+    }
+  }, [selectedPost]);
+
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
     if (inputText.trim()) {
@@ -15,8 +28,31 @@ const CommentDialog = ({open, setOpen}) => {
       setText("");
     }
   }
-  const sendMessageHandler = () => {
-    alert(text);
+
+  const sendMessageHandler = async () => {
+
+    try {
+      const res = await axios.post(`https://instaclone-g9h5.onrender.com/api/v1/post/${selectedPost?._id}/comment`, { text }, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
+
+      if (res.data.success) {
+        const updatedCommentData = [...comment, res.data.comment];
+        setComment(updatedCommentData);
+
+        const updatedPostData = posts.map(p =>
+          p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
+        );
+        dispatch(setPosts(updatedPostData));
+        toast.success(res.data.message);
+        setText("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <Dialog open={open}>
@@ -27,7 +63,7 @@ const CommentDialog = ({open, setOpen}) => {
         {/* Image Section */}
         <div className="w-full sm:w-1/2">
           <img
-            src="post1.jpg"
+            src={selectedPost?.image}
             alt="post_img"
             className="w-full h-48 sm:h-full object-cover sm:rounded-l-lg"
           />
@@ -40,12 +76,12 @@ const CommentDialog = ({open, setOpen}) => {
             <div className="flex gap-3 items-center">
               <Link>
                 <Avatar>
-                  <AvatarImage src="" />
+                  <AvatarImage src={selectedPost?.author?.profilePicture}/>
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
               </Link>
               <div>
-                <Link className="font-semibold text-xs sm:text-sm">user</Link>
+                <Link className="font-semibold text-xs sm:text-sm">{selectedPost?.author?.username}</Link>
                 {/* <span className="text-gray-600 text-sm">Bio here...</span> */}
               </div>
             </div>
@@ -66,10 +102,9 @@ const CommentDialog = ({open, setOpen}) => {
 
           {/* Comments List */}
           <div className="flex-1 overflow-y-auto max-h-[calc(100vh-12rem)] sm:max-h-96 p-4">
-            comments aayenge
-            {/* {
-              comment.map((comment) => <Comment key={comment._id} comment={comment} />)
-            } */}
+            {
+              selectedPost?.comment.map((comment) => <Comment key={comment._id} comment={comment} />)
+            }
           </div>
 
           {/* Add Comment Input */}
