@@ -1,13 +1,14 @@
 import React from 'react'
 import { MoreHorizontal } from 'lucide-react'
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import { Link } from 'react-router-dom'
 import Comment from './Comment'
 import { toast } from 'sonner'
 import { setPosts } from '@/redux/postSlice'
+import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux'
 const CommentDialog = ({open, setOpen}) => {
   const [text, setText] = useState("");
@@ -32,7 +33,7 @@ const CommentDialog = ({open, setOpen}) => {
   const sendMessageHandler = async () => {
 
     try {
-      const res = await axios.post(`https://instaclone-g9h5.onrender.com/api/v1/post/${selectedPost?._id}/comment`, { text }, {
+      const res = await axios.post(`http://localhost:8000/api/v1/post/${selectedPost?._id}/comment`, { text }, {
         headers: {
           'Content-Type': 'application/json'
         },
@@ -103,7 +104,7 @@ const CommentDialog = ({open, setOpen}) => {
           {/* Comments List */}
           <div className="flex-1 overflow-y-auto max-h-[calc(100vh-12rem)] sm:max-h-96 p-4">
             {
-              selectedPost?.comment.map((comment) => <Comment key={comment._id} comment={comment} />)
+              (selectedPost?.comments || []).map((comment) => <Comment key={comment._id} comment={comment} />)
             }
           </div>
 

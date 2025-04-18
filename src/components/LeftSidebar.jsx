@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import {useDispatch, useSelector } from 'react-redux'
 import CreatePost from './CreatePost'
+import axios from 'axios';
+import { setAuthUser } from '@/redux/authSlice'
+import { setSelectedPost,setPosts } from '@/redux/postSlice'
 const LeftSidebar = () => {
 
   const navigate=useNavigate();
@@ -12,19 +15,17 @@ const LeftSidebar = () => {
   const dispatch=useDispatch();
   const [open,setOpen]=useState(false);
   const logoutHandler = async () => {
-    console.log("logout handler called");
-    
     try {
-        const res = await axios.get('https://instaclone-g9h5.onrender.com/api/v1/user/logout', { withCredentials: true });
+        const res = await axios.get('http://localhost:8000/api/v1/user/logout', { withCredentials: true });
         if (res.data.success) {
-             dispatch(setAuthUser(null));
+            dispatch(setAuthUser(null));
             dispatch(setSelectedPost(null));
             dispatch(setPosts([]));
             navigate("/login");
             toast.success(res.data.message);
         }
     } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message || "An unexpected error occurred");
     }
   }
     const sidebarHandler = (textType) => {
